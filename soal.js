@@ -115,7 +115,7 @@ export const data = {
     { q: "Sifat mustahil bagi Allah yang berarti 'buta' adalah?", a: "Ama", options: ["Jahlun", "Samam", "Ama", "Bakam"] },
     { q: "Berapa hari Nabi Yunus a.s. berada di dalam perut ikan?", a: "Tiga hari tiga malam", options: ["Satu hari", "Tiga hari tiga malam", "Tujuh hari", "Dua belas hari"] },
   ],
-  bahasa: [
+  Indonesia: [
     {
       q: "Antonim dari kata 'besar' adalah?",
       a: "Kecil",
@@ -284,4 +284,5 @@ export const data = {
   {q: "Hasil dari 100 ÷ 4 + 25 adalah?", a: "50", options: ["45", "50", "55", "60"] }
 ],
 };
+
 
