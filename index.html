@@ -83,6 +83,18 @@ input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; 
 #popupDonasi h3 { color: #007bff; margin-top: 0; }
 #popupDonasi button { margin-top:15px; padding:10px 20px; background-color:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer; }
 @keyframes fadeIn { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
+  
+@keyframes pointing {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-10deg); }
+  50% { transform: translateX(-50%) rotate(10deg); }
+  75% { transform: translateX(-50%) rotate(-10deg); }
+  100% { transform: translateX(-50%) rotate(0deg); }
+}
+
+#donasiBtn.pointing {
+  animation: pointing 1.5s infinite;
+}
 
 </style>
 </head>
@@ -135,3 +147,4 @@ input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; 
 
 </body>
 </html>
+
