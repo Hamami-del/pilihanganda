@@ -153,3 +153,25 @@ function tampilkanSoal() {
 donasiBtn.onclick = () => popupDonasi.style.display = "flex";
 if (tutupPopup) tutupPopup.onclick = () => popupDonasi.style.display = "none";
 window.onclick = (e) => { if (e.target === popupDonasi) popupDonasi.style.display = "none"; };
+// 🔹 Generate 50 bintang acak
+for (let i=0; i<50; i++) {
+  const star = document.createElement("div");
+  star.classList.add("star");
+  star.style.top = Math.random() * 100 + "%";
+  star.style.left = Math.random() * 100 + "%";
+  star.style.animationDelay = (Math.random() * 3) + "s";
+  star.style.width = star.style.height = (Math.random()*3 + 2) + "px";
+  document.getElementById("stars").appendChild(star);
+}
+
+// 🔹 Generate 30 particle floating
+for (let i=0; i<30; i++) {
+  const particle = document.createElement("div");
+  particle.classList.add("particle");
+  particle.style.left = Math.random() * 100 + "%";
+  particle.style.width = particle.style.height = (Math.random()*4 + 2) + "px";
+  particle.style.animationDuration = (Math.random()*5 + 5) + "s";
+  particle.style.animationDelay = (Math.random()*5) + "s";
+  document.getElementById("particles").appendChild(particle);
+}
+
