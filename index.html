@@ -6,10 +6,9 @@
 <title>Kuis Pintar | By Hamami</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Gradient background animasi */
+/* Gradient background animasi */
 body {
   font-family: sans-serif;
-  padding: 20px;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -19,19 +18,10 @@ body {
   animation: gradientBG 15s ease infinite;
   position: relative;
   overflow: hidden;
+  margin: 0;
+  padding: 20px;
   z-index: 0;
 }
-  /* Efek bounce ringan untuk tombol donasi */
-@keyframes bounceBtn {
-  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-  40% { transform: translateX(-50%) translateY(-10px); }
-  60% { transform: translateX(-50%) translateY(-5px); }
-}
-
-#donasiBtn.bounce {
-  animation: bounceBtn 2s infinite;
-}
-
 
 @keyframes gradientBG {
   0% {background-position: 0% 50%;}
@@ -40,193 +30,59 @@ body {
 }
 
 /* Bintang */
-#stars {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.star {
-  position: absolute;
-  width: 2-4px;
-  height: 2-4px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: twinkle 3s infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% {opacity: 0.2;}
-  50% {opacity: 1;}
-}
+#stars { position: fixed; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 0; }
+.star { position: absolute; width: 2-4px; height: 2-4px; background: white; border-radius: 50%; opacity: 0.8; animation: twinkle 3s infinite; }
+@keyframes twinkle { 0%,100% {opacity:0.2;} 50% {opacity:1;} }
 
 /* Particle floating */
-#particles {
+#particles { position: fixed; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.particle { position: absolute; width: 4px; height: 4px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: floatUp linear infinite; }
+@keyframes floatUp { 0% {transform: translateY(100vh);} 100% {transform: translateY(-10vh);} }
+
+/* Container kuis */
+.container { max-width: 600px; width: 100%; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; z-index:1; }
+h2 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+.button-group button { padding: 10px 15px; margin: 5px; cursor: pointer; border-radius: 5px; border: 1px solid #007bff; background: #fff; color: #007bff; font-size: 16px; transition: background-color 0.3s, color 0.3s; }
+.button-group button:hover:not(:disabled) { background: #007bff; color: #fff; }
+#kuis-container button { display: block; width: 100%; margin: 10px 0; padding: 12px; background-color: #007bff; color: white; border: none; }
+#kuis-container button:disabled { opacity: 0.7; }
+#skor, #hasil-feedback { font-weight: bold; margin-top: 20px; padding: 10px; border-radius: 5px; }
+#hasil-feedback.correct { background-color: #d4edda; color: #155724; }
+#hasil-feedback.wrong { background-color: #f8d7da; color: #721c24; }
+
+/* Tombol Mulai */
+#mulaiBtn { background-color: #28a745; color: white; border: none; width: 100%; padding: 12px; margin-top: 10px; }
+#mulaiBtn:hover { background-color: #218838; }
+
+/* Tombol Donasi & Copyright di tengah */
+#donasiBtn, #copyright {
   position: fixed;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(255,255,255,0.6);
-  border-radius: 50%;
-  animation: floatUp linear infinite;
-}
-
-@keyframes floatUp {
-  0% {transform: translateY(100vh);}
-  100% {transform: translateY(-10vh);}
-}
-
-  body { font-family: sans-serif; padding: 20px; background: #f7f7f7; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-  .container { max-width: 600px; width: 100%; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-  h2 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-  input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-  .button-group button { 
-      padding: 10px 15px; 
-      margin: 5px; 
-      cursor: pointer; 
-      border-radius: 5px; 
-      border: 1px solid #007bff; 
-      background: #fff; 
-      color: #007bff; 
-      font-size: 16px; 
-      transition: background-color 0.3s, color 0.3s;
-  }
-  .button-group button:hover:not(:disabled) { 
-      background: #007bff; 
-      color: #fff; 
-  }
-  #kuis-container button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-  }
-  #kuis-container button:disabled {
-      opacity: 0.7;
-  }
-  #skor, #hasil-feedback { font-weight: bold; margin-top: 20px; padding: 10px; border-radius: 5px; }
-  #hasil-feedback.correct { background-color: #d4edda; color: #155724; }
-  #hasil-feedback.wrong { background-color: #f8d7da; color: #721c24; }
-  
-  /* Style untuk tombol Mulai */
-  #mulaiBtn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-  }
-  #mulaiBtn:hover {
-      background-color: #218838;
-  }
-  
-  /* Style untuk Tombol Donasi di luar container utama */
-  #donasiBtn {
-      background-color: #ffc107;
-      color: #333;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      position: fixed; /* Tetap di layar */
-      bottom: 20px;
-      right: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-  #donasiBtn:hover {
-      background-color: #e0a800;
-  }
-
-  /* Style untuk Popup Donasi */
-  #popupDonasi { 
-      display:none; 
-      position:fixed; 
-      top:0; 
-      left:0; 
-      width:100%; 
-      height:100%; 
-      background:rgba(0,0,0,0.6); 
-      justify-content:center; 
-      align-items:center; 
-      z-index: 1000;
-  }
-  #popupDonasi .popup-content { 
-      background:#fff; 
-      padding:30px; 
-      border-radius:10px; 
-      max-width:400px; 
-      text-align:center; 
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      animation: fadeIn 0.3s;
-  }
-  #popupDonasi h3 { 
-      color: #007bff; 
-      margin-top: 0;
-  }
-  #popupDonasi button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  /* Wrapper tengah-tengah halaman */
-#copyright,
-#donasiBtn {
-  position: fixed; /* tetap di layar */
-  left: 50%;       /* horizontal center */
-  transform: translateX(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  z-index: 1002;   /* di atas background animasi */
+  z-index: 1002;
+  opacity: 0; /* fade-in awal */
 }
 
-/* Posisi vertikal */
-#copyright {
-  top: 50%;          /* tengah vertikal */
-  margin: 0;
-  font-weight: bold;
-  font-size: 16px;
-  color: #333;
-}
+#copyright { top: 45%; font-weight: bold; font-size: 16px; color: #333; }
+#donasiBtn { top: 55%; padding: 12px 20px; font-size: 16px; background-color: #ffc107; color:#333; border:none; border-radius:8px; cursor:pointer; transition: background 0.3s; }
+#donasiBtn:hover { background-color: #e0a800; }
 
-#donasiBtn {
-  top: 60%;          /* sedikit di bawah copyright */
-  padding: 12px 20px;
-  font-size: 16px;
-  background-color: #ffc107;
-  color: #333;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+/* Animasi bounce */
+@keyframes bounceBtn {
+  0%,20%,50%,80%,100% { transform: translate(-50%, -50%) translateY(0); }
+  40% { transform: translate(-50%, -50%) translateY(-10px); }
+  60% { transform: translate(-50%, -50%) translateY(-5px); }
 }
+#donasiBtn.bounce { animation: bounceBtn 2s infinite; }
 
-#donasiBtn:hover {
-  background-color: #e0a800;
-}
+/* Popup Donasi */
+#popupDonasi { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index: 1003; }
+#popupDonasi .popup-content { background:#fff; padding:30px; border-radius:10px; max-width:400px; text-align:center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: fadeIn 0.3s; }
+#popupDonasi h3 { color: #007bff; margin-top: 0; }
+#popupDonasi button { margin-top:15px; padding:10px 20px; background-color:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
 
 </style>
 </head>
@@ -237,18 +93,14 @@ body {
     <h2>Mulai Kuis</h2>
     <label for="namaPemain">Nama Kamu:</label>
     <input type="text" id="namaPemain" placeholder="Masukkan nama..." />
-    
     <label for="levelSelect">Pilih Mata Pelajaran:</label>
     <select id="levelSelect">
       <option value="agama">Agama</option>
       <option value="indonesia">Bahasa Indonesia</option>
       <option value="matematika">Matematika</option>
     </select>
-    
     <button id="mulaiBtn">Mulai Kuis</button>
-    <p id="copyright">Copyright By Hamami</p>
   </div>
-
   <div id="kuis-container" style="display:none;">
     <h2 id="pertanyaan"></h2>
     <div id="pilihan-container" class="button-group"></div>
@@ -258,6 +110,8 @@ body {
   </div>
 </div>
 
+<!-- Tombol & copyright di luar container -->
+<p id="copyright">Copyright By Hamami</p>
 <button id="donasiBtn">💖 Donasi/Dukung Kami</button>
 
 <div id="popupDonasi">
@@ -268,21 +122,16 @@ body {
     <button id="tutupPopup">Tutup</button>
   </div>
 </div>
+
 <audio id="audioCorrect" src="correct.mp3" preload="auto"></audio>
 <audio id="audioWrong" src="wrong.mp3" preload="auto"></audio>
-  
+
 <script src="soal.js" type="module"></script>
 <script src="main.js" type="module"></script>
-<!-- Bintang -->
-<div id="stars"></div>
 
-<!-- Particle floating -->
+<!-- Bintang & particle -->
+<div id="stars"></div>
 <div id="particles"></div>
 
 </body>
 </html>
-
-
-
-
-
