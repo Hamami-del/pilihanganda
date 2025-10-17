@@ -1,164 +1,164 @@
-import { data } from "./soal.js";
+console.log("✅ main.js berhasil dijalankan");
 
-// 🔹 Ambil elemen DOM (Lama)
+// Impor modul ES6 Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+import { data } from "./soal.js";
+// Catatan: Jika Anda menyimpan firebaseConfig di file terpisah (firebaseConfig.js), Anda harus mengimpornya.
+// Jika tidak, biarkan di sini. Saya asumsikan Anda ingin menggunakannya di sini.
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB35RYpFoHPFOFbQhr6rtbAWiWdGbta0I4",
+  authDomain: "kuis-hamami.firebaseapp.com",
+  databaseURL: "https://kuis-hamami-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kuis-hamami",
+  storageBucket: "kuis-hamami.firebasestorage.app",
+  messagingSenderId: "955115071133",
+  appId: "1:955115071133:web:c42d2f365082c74bf39674"
+};
+
+// 🔹 Inisialisasi Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// 🔹 Ambil elemen DOM (SESUAIKAN DENGAN INDEX.HTML BARU)
 const namaContainer = document.getElementById("nama-container");
 const namaInput = document.getElementById("namaPemain");
-const mulaiBtn = document.getElementById("mulaiBtn");
-const levelSelect = document.getElementById("levelSelect"); 
-const kuisContainer = document.getElementById("kuis-container");
-const pertanyaanText = document.getElementById("pertanyaan");
-const pilihanContainer = document.getElementById("pilihan-container");
-const hasilFeedback = document.getElementById("hasil-feedback");
-const skorText = document.getElementById("skor");
-const nextBtn = document.getElementById("nextBtn");
-
-// 🔹 Ambil elemen DOM (Donasi)
+const mulaiBtn = document.getElementById("mulaiBtn"); // Tombol mulai (dulu btnKirim)
+const levelSelect = document.getElementById("levelSelect"); // Pilihan mapel
+const kuisContainer = document.getElementById("kuis-container"); // Kontainer kuis (dulu kuisContainer)
+const soalText = document.getElementById("soalText"); // Tempat teks soal
+const jawabanInput = document.getElementById("jawabanInput"); // Input jawaban
+const btnJawab = document.getElementById("btnJawab"); // Tombol jawab
+const hasil = document.getElementById("hasil"); // Feedback benar/salah
+const skorText = document.getElementById("skorText"); // Tempat skor (dulu skorText)
 const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
-const tutupPopup = document.getElementById("tutupPopup");
+const tutupPopup = document.getElementById("tutupPopup"); // Tombol tutup popup
 
-// 🔹 Ambil elemen DOM (Audio - BARU)
-const audioCorrect = document.getElementById("audioCorrect");
-const audioWrong = document.getElementById("audioWrong");
-
-// 🔹 Variabel global
 let namaPemain = "";
 let indexSoal = 0;
-let levelDipilih = ""; 
+let levelDipilih = "agama"; // Default awal
 let skor = 0;
 
-// 🔹 Fungsi untuk mengacak array (tetap sama)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[i], array[j]];
-    }
+// 🔹 Fungsi Normalisasi (penting untuk jawaban isian)
+function normalisasi(teks) {
+  // Menghilangkan spasi, mengubah huruf kecil, menghapus tanda baca kecuali spasi
+  return teks.toLowerCase().trim().replace(/[^\w\s]/g, ""); 
+}
+
+// 🔹 Fungsi Animasi Skor
+function animasiSkor(nilaiBaru) {
+  let nilaiSekarang = parseInt(skorText.textContent.replace('Skor: ', '') || 0); // Ambil nilai numerik
+  const step = nilaiBaru > nilaiSekarang ? 10 : (nilaiBaru < nilaiSekarang ? -10 : 0);
+  const interval = setInterval(() => {
+    nilaiSekarang += step;
+    skorText.textContent = `Skor: ${nilaiSekarang}`;
+    if (nilaiSekarang === nilaiBaru) clearInterval(interval);
+  }, 30);
 }
 
 // -------------------------------------------------------------------------
 // 🔹 LOGIKA KUIS
 // -------------------------------------------------------------------------
 
-// 🔹 Saat klik tombol "Mulai Kuis" (tetap sama)
+// 🔹 Saat klik tombol "Mulai"
 mulaiBtn.onclick = () => {
   namaPemain = namaInput.value.trim();
   levelDipilih = levelSelect.value;
-  
+
   if (namaPemain === "") {
-    alert("Mohon isi nama Anda untuk memulai kuis. 🙏");
+    alert("Isi nama dulu, ya! 🙏");
     return;
   }
 
-  namaContainer.style.display = "none";
+  // Kirim data ke Firebase (nama dan pelajaran)
+  push(ref(db, "pemain/"), {
+    nama: namaPemain,
+    level: levelDipilih,
+    waktu: new Date().toLocaleString("id-ID")
+  });
+
+  // Sembunyikan form, tampilkan kuis
+  namaContainer.style.display = "none"; // Gunakan nama container yang benar
   kuisContainer.style.display = "block";
 
+  // Reset progres
   indexSoal = 0;
   skor = 0;
-  skorText.textContent = "Skor: 0";
-  hasilFeedback.textContent = "";
+  skorText.textContent = "Skor: 0"; // Pastikan formatnya sama
 
   tampilkanSoal();
 };
 
-// 🔹 Fungsi tampilkan soal (tetap sama)
+// 🔹 Fungsi tampilkan soal
 function tampilkanSoal() {
   const soal = data[levelDipilih];
 
   if (!soal || soal.length === 0) {
-    pertanyaanText.textContent = "❌ Tidak ada soal untuk mata pelajaran ini.";
-    pilihanContainer.innerHTML = "";
-    nextBtn.style.display = "none";
+    soalText.textContent = "❌ Tidak ada soal untuk mata pelajaran ini.";
+    jawabanInput.style.display = "none";
+    btnJawab.style.display = "none";
     return;
   }
 
   if (indexSoal >= soal.length) {
-    pertanyaanText.textContent = `🎉 Kuis selesai! Skor akhir Anda: ${skor}. Terima kasih, ${namaPemain}!`;
-    pilihanContainer.innerHTML = "";
-    nextBtn.style.display = "none";
-    hasilFeedback.textContent = "";
+    soalText.textContent = `🎉 Kuis selesai! Skor akhir Anda: ${skor}. Terima kasih, ${namaPemain}!`;
+    jawabanInput.style.display = "none";
+    btnJawab.style.display = "none";
+    hasil.textContent = "";
     return;
   }
+  
+  // Tampilkan input dan tombol lagi jika sebelumnya disembunyikan
+  jawabanInput.style.display = "block";
+  btnJawab.style.display = "block";
 
-  const currentSoal = soal[indexSoal];
-
-  pertanyaanText.textContent = `Soal ${indexSoal + 1}: ${currentSoal.q}`;
-  pilihanContainer.innerHTML = ""; 
-  hasilFeedback.textContent = ""; 
-  nextBtn.style.display = "none";
-
-  shuffleArray(currentSoal.options);
-
-  if (currentSoal.options) {
-      currentSoal.options.forEach(pilihan => {
-          const button = document.createElement("button");
-          button.textContent = pilihan;
-          button.setAttribute("data-jawaban", pilihan);
-          button.onclick = () => cekJawaban(button, currentSoal.a);
-          pilihanContainer.appendChild(button);
-      });
-  }
+  soalText.textContent = `Soal ${indexSoal + 1}: ${soal[indexSoal].q}`;
+  hasil.textContent = "";
+  jawabanInput.value = "";
+  jawabanInput.focus(); // Fokus ke input untuk kemudahan pengguna
 }
 
-// 🔹 Fungsi cek jawaban (MODIFIKASI AUDIO)
-function cekJawaban(tombolYangDiklik, jawabanBenar) {
-  
-  // Matikan semua tombol pilihan setelah menjawab
-  Array.from(pilihanContainer.children).forEach(btn => {
-      btn.disabled = true;
-      btn.style.cursor = 'default';
-  });
+// 🔹 Saat jawab soal
+btnJawab.onclick = () => {
+  const soal = data[levelDipilih];
+  const jawabanPemain = normalisasi(jawabanInput.value);
+  const jawabanBenar = normalisasi(soal[indexSoal].a);
 
-  const jawabanPemain = tombolYangDiklik.getAttribute("data-jawaban");
-  hasilFeedback.classList.remove("correct", "wrong");
+  // Hapus class lama
+  hasil.classList.remove("benar", "salah");
 
   if (jawabanPemain === jawabanBenar) {
-      // 🔊 Mainkan suara benar
-      audioCorrect.currentTime = 0; // Reset audio jika sedang dimainkan
-      audioCorrect.play();
-      
-      hasilFeedback.textContent = "✅ Jawaban Anda Benar!";
-      hasilFeedback.classList.add("correct");
-      tombolYangDiklik.style.backgroundColor = "#28a745"; 
-      skor += 10;
-      skorText.textContent = `Skor: ${skor}`;
+    hasil.textContent = "✅ Benar!";
+    hasil.classList.add("benar");
+    skor += 10;
+    animasiSkor(skor);
   } else {
-      // 🔊 Mainkan suara salah
-      audioWrong.currentTime = 0; // Reset audio jika sedang dimainkan
-      audioWrong.play();
-      
-      hasilFeedback.textContent = `❌ Jawaban Salah! Jawaban yang benar adalah: ${jawabanBenar}`;
-      hasilFeedback.classList.add("wrong");
-      tombolYangDiklik.style.backgroundColor = "#dc3545"; 
-      
-      const tombolBenar = Array.from(pilihanContainer.children).find(btn => btn.getAttribute("data-jawaban") === jawabanBenar);
-      if(tombolBenar) tombolBenar.style.backgroundColor = "#28a745";
+    hasil.textContent = `❌ Salah! Jawaban yang benar adalah: ${soal[indexSoal].a}`;
+    hasil.classList.add("salah");
   }
-  nextBtn.style.display = "block";
-}
 
-// 🔹 Saat klik tombol "Soal Berikutnya" (tetap sama)
-nextBtn.onclick = () => {
+  // Lanjut ke soal berikutnya setelah jeda singkat
   indexSoal++;
-  tampilkanSoal();
+  setTimeout(tampilkanSoal, 1200); // Jeda 1.2 detik agar pengguna bisa melihat feedback
 };
 
 // -------------------------------------------------------------------------
-// 🔹 LOGIKA POPUP DONASI (tetap sama)
+// 🔹 LOGIKA DONASI
 // -------------------------------------------------------------------------
 
-// 🔹 Saat klik tombol "Donasi"
+// 🔹 Tombol Donasi
 donasiBtn.onclick = () => {
   popupDonasi.style.display = "flex";
 };
 
-// 🔹 Saat klik tombol "Tutup" di dalam popup
+// 🔹 Tutup popup (Menggunakan ID #tutupPopup)
 tutupPopup.onclick = () => {
   popupDonasi.style.display = "none";
 };
 
-// 🔹 Saat klik di luar kotak popup, popup tertutup (opsional)
-window.onclick = (event) => {
-  if (event.target === popupDonasi) {
-    popupDonasi.style.display = "none";
-  }
+// 🔹 Tutup popup kalau klik di luar kotak
+window.onclick = (e) => {
+  if (e.target === popupDonasi) popupDonasi.style.display = "none";
 };
