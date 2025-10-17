@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Pilihan Ganda</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f7f7f7; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .container { max-width: 600px; width: 100%; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  h2 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+  input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+  .button-group button { 
+      padding: 10px 15px; 
+      margin: 5px; 
+      cursor: pointer; 
+      border-radius: 5px; 
+      border: 1px solid #007bff; 
+      background: #fff; 
+      color: #007bff; 
+      font-size: 16px; 
+      transition: background-color 0.3s, color 0.3s;
+  }
+  .button-group button:hover:not(:disabled) { 
+      background: #007bff; 
+      color: #fff; 
+  }
+  #kuis-container button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+  }
+  #kuis-container button:disabled {
+      opacity: 0.7;
+  }
+  #skor, #hasil-feedback { font-weight: bold; margin-top: 20px; padding: 10px; border-radius: 5px; }
+  #hasil-feedback.correct { background-color: #d4edda; color: #155724; }
+  #hasil-feedback.wrong { background-color: #f8d7da; color: #721c24; }
+  
+  /* Style untuk tombol Mulai */
+  #mulaiBtn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+  }
+  #mulaiBtn:hover {
+      background-color: #218838;
+  }
+  
+  /* Style untuk Tombol Donasi di luar container utama */
+  #donasiBtn {
+      background-color: #ffc107;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      position: fixed; /* Tetap di layar */
+      bottom: 20px;
+      right: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  #donasiBtn:hover {
+      background-color: #e0a800;
+  }
+
+  /* Style untuk Popup Donasi */
+  #popupDonasi { 
+      display:none; 
+      position:fixed; 
+      top:0; 
+      left:0; 
+      width:100%; 
+      height:100%; 
+      background:rgba(0,0,0,0.6); 
+      justify-content:center; 
+      align-items:center; 
+      z-index: 1000;
+  }
+  #popupDonasi .popup-content { 
+      background:#fff; 
+      padding:30px; 
+      border-radius:10px; 
+      max-width:400px; 
+      text-align:center; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s;
+  }
+  #popupDonasi h3 { 
+      color: #007bff; 
+      margin-top: 0;
+  }
+  #popupDonasi button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="nama-container">
+    <h2>Mulai Kuis</h2>
+    <label for="namaPemain">Nama Kamu:</label>
+    <input type="text" id="namaPemain" placeholder="Masukkan nama..." />
+    
+    <label for="levelSelect">Pilih Mata Pelajaran:</label>
+    <select id="levelSelect">
+      <option value="agama">Agama</option>
+      <option value="indonesia">Bahasa Indonesia</option>
+      <option value="matematika">Matematika</option>
+    </select>
+    
+    <button id="mulaiBtn">Mulai Kuis</button>
+  </div>
+
+  <div id="kuis-container" style="display:none;">
+    <h2 id="pertanyaan"></h2>
+    <div id="pilihan-container" class="button-group"></div>
+    <p id="hasil-feedback"></p>
+    <p id="skor">Skor: 0</p>
+    <button id="nextBtn" style="display:none;">Soal Berikutnya</button>
+  </div>
+</div>
+
+<button id="donasiBtn">💖 Donasi/Dukung Kami</button>
+
+<div id="popupDonasi">
+  <div class="popup-content">
+    <h3>Terima Kasih Banyak! 🙏</h3>
+    <p>Dukungan Anda sangat berarti untuk pengembangan kuis ini. Setiap kontribusi membantu kami membuat soal dan fitur yang lebih baik.</p>
+    <p>Semoga kebaikan Anda dibalas. Jazakumullah Khairan Katsiran!</p>
+    <button id="tutupPopup">Tutup</button>
+  </div>
+</div>
+
+<script src="soal.js" type="module"></script>
+<script src="main.js" type="module"></script>
+
+</body>
+</html>
