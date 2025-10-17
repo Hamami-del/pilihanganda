@@ -182,6 +182,41 @@ body {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  /* Wrapper tengah-tengah halaman */
+#copyright,
+#donasiBtn {
+  position: fixed; /* tetap di layar */
+  left: 50%;       /* horizontal center */
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 1002;   /* di atas background animasi */
+}
+
+/* Posisi vertikal */
+#copyright {
+  top: 50%;          /* tengah vertikal */
+  margin: 0;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+#donasiBtn {
+  top: 60%;          /* sedikit di bawah copyright */
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#donasiBtn:hover {
+  background-color: #e0a800;
+}
+
 </style>
 </head>
 <body>
@@ -235,6 +270,7 @@ body {
 
 </body>
 </html>
+
 
 
 
