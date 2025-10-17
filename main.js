@@ -34,6 +34,7 @@ let skor = 0;
 // Animasi fade-in & bounce tombol Donasi
 window.addEventListener("load", () => {
     donasiBtn.classList.add("bounce");
+    donasiBtn.classList.add("pointing");
     donasiBtn.style.transition = "opacity 1s";
     document.getElementById("copyright").style.transition = "opacity 1s";
     setTimeout(() => {
@@ -114,3 +115,4 @@ function checkJawaban(jawaban, jawabanBenar) {
 donasiBtn.onclick = () => popupDonasi.style.display = "flex";
 tutupPopup.onclick = () => popupDonasi.style.display = "none";
 window.onclick = e => { if(e.target === popupDonasi) popupDonasi.style.display = "none"; };
+
