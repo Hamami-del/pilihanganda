@@ -75,7 +75,7 @@ export const data = {
       a: "Isra Mi'raj",
       options: ["Hijrah", "Isra Mi'raj", "Fathu Makkah", "Perang Badar"]
     },
-    // Soal 16 - 50
+  
     { q: "Jumlah ayat dalam Surah Al-Fatihah adalah?", a: "Tujuh", options: ["Lima", "Tujuh", "Delapan", "Enam"] },
     { q: "Kitab suci Nabi Daud a.s. adalah?", a: "Zabur", options: ["Taurat", "Zabur", "Injil", "Al-Qur'an"] },
     { q: "Rukun haji yang wajib dilaksanakan adalah?", a: "Wukuf di Arafah", options: ["Mencium Hajar Aswad", "Melempar jumrah", "Wukuf di Arafah", "Mabit di Muzdalifah"] },
@@ -191,8 +191,7 @@ export const data = {
       a: "Konjungsi",
       options: ["Preposisi", "Interjeksi", "Konjungsi", "Adverbia"]
     },
-    // Soal 16 - 50
-    { q: "Kata sifat disebut juga?", a: "Adjektiva", options: ["Verba", "Nomina", "Adjektiva", "Pronomina"] },
+      { q: "Kata sifat disebut juga?", a: "Adjektiva", options: ["Verba", "Nomina", "Adjektiva", "Pronomina"] },
     { q: "Paragraf yang kalimat utamanya di akhir disebut paragraf?", a: "Induktif", options: ["Deduktif", "Induktif", "Campuran", "Naratif"] },
     { q: "Apa nama lain dari kamus istilah?", a: "Glosarium", options: ["Bibliografi", "Indeks", "Glosarium", "Sinopsis"] },
     { q: "Kalimat yang subjeknya melakukan pekerjaan disebut kalimat?", a: "Aktif", options: ["Pasif", "Tunggal", "Aktif", "Majemuk"] },
@@ -285,3 +284,4 @@ export const data = {
   {q: "Hasil dari 100 ÷ 4 + 25 adalah?", a: "50", options: ["45", "50", "55", "60"] }
 ],
 };
+
