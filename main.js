@@ -1,29 +1,29 @@
 console.log("✅ main.js berhasil dijalankan");
 
-// Impor dari file terpisah (Perhatikan import firebaseConfig)
+// Impor dari file terpisah (membutuhkan type="module" di HTML)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { data } from "./soal.js";
-import { firebaseConfig } from "./firebaseConfig.js"; // Import Config dari file terpisah
+import { firebaseConfig } from "./firebaseConfig.js"; // Mengimpor config Anda
 
 // 🔹 Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 🔹 Ambil elemen DOM (Semua sudah disinkronkan dengan index.html baru)
+// 🔹 Ambil elemen DOM (SEMUA ID SINKRON)
 const namaContainer = document.getElementById("nama-container"); // <-- FIX: Ambil kontainer nama
 const namaInput = document.getElementById("namaInput");
-const btnKirim = document.getElementById("btnKirim"); // Tombol Mulai Kuis
-const kuisContainer = document.getElementById("kuisContainer");
-const soalText = document.getElementById("soalText");
+const btnKirim = document.getElementById("btnKirim"); 
+const kuisContainer = document.getElementById("kuisContainer"); // <-- FIX: ID kuisContainer
+const soalText = document.getElementById("soalText"); // <-- FIX: ID soalText
 const jawabanInput = document.getElementById("jawabanInput");
 const btnJawab = document.getElementById("btnJawab");
 const hasil = document.getElementById("hasil");
 const levelSelect = document.getElementById("levelSelect"); 
-const skorText = document.getElementById("skorText");
+const skorText = document.getElementById("skorText"); // <-- FIX: ID skorText
 const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
-const tutupPopup = document.getElementById("tutupPopup"); // Tombol Tutup Popup
+const tutupPopup = document.getElementById("tutupPopup"); 
 
 let namaPemain = "";
 let indexSoal = 0;
@@ -32,6 +32,7 @@ let skor = 0;
 
 // 🔹 Normalisasi teks
 function normalisasi(teks) {
+  // Mengubah ke huruf kecil, menghilangkan spasi di tepi, dan menghapus karakter non-alfanumerik/non-spasi
   return teks.toLowerCase().trim().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, ""); 
 }
 
@@ -41,7 +42,7 @@ function animasiSkor(nilaiBaru) {
   const step = 1; 
   const interval = setInterval(() => {
     nilaiSekarang += (nilaiBaru > nilaiSekarang ? step : 0);
-    skorText.textContent = `Skor: ${nilaiSekarang}`;
+    skorText.textContent = `Skor: ${nilaiSekarang}`; // Menjaga format teks "Skor: "
     if (nilaiSekarang >= nilaiBaru) {
       clearInterval(interval);
       skorText.textContent = `Skor: ${nilaiBaru}`;
@@ -70,14 +71,14 @@ btnKirim.onclick = () => {
     waktu: new Date().toLocaleString("id-ID")
   });
 
-  // FIX: Sembunyikan form yang benar
+  // FIX: Menggunakan namaContainer yang benar
   namaContainer.style.display = "none"; 
   kuisContainer.style.display = "block";
 
   // Reset progres
   indexSoal = 0;
   skor = 0;
-  skorText.textContent = "Skor: 0"; 
+  skorText.textContent = "Skor: 0"; // Memastikan format teks
 
   tampilkanSoal();
 };
