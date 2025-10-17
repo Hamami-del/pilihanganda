@@ -6,7 +6,7 @@
 <title>Kuis Pilihan Ganda</title>
 <style>
   body { font-family: sans-serif; padding: 20px; background: #f7f7f7; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-  .container { max-width: 600px; width: 100%; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .container { max-width: 600px; width: 100%; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
   h2 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
   input[type="text"], select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
   .button-group button { 
@@ -52,12 +52,69 @@
   #mulaiBtn:hover {
       background-color: #218838;
   }
+  
+  /* Style untuk Tombol Donasi di luar container utama */
+  #donasiBtn {
+      background-color: #ffc107;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      position: fixed; /* Tetap di layar */
+      bottom: 20px;
+      right: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  #donasiBtn:hover {
+      background-color: #e0a800;
+  }
+
+  /* Style untuk Popup Donasi */
+  #popupDonasi { 
+      display:none; 
+      position:fixed; 
+      top:0; 
+      left:0; 
+      width:100%; 
+      height:100%; 
+      background:rgba(0,0,0,0.6); 
+      justify-content:center; 
+      align-items:center; 
+      z-index: 1000;
+  }
+  #popupDonasi .popup-content { 
+      background:#fff; 
+      padding:30px; 
+      border-radius:10px; 
+      max-width:400px; 
+      text-align:center; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s;
+  }
+  #popupDonasi h3 { 
+      color: #007bff; 
+      margin-top: 0;
+  }
+  #popupDonasi button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
-
   <div id="nama-container">
     <h2>Mulai Kuis</h2>
     <label for="namaPemain">Nama Kamu:</label>
@@ -75,15 +132,22 @@
 
   <div id="kuis-container" style="display:none;">
     <h2 id="pertanyaan"></h2>
-    
     <div id="pilihan-container" class="button-group"></div>
-    
     <p id="hasil-feedback"></p>
     <p id="skor">Skor: 0</p>
-    
     <button id="nextBtn" style="display:none;">Soal Berikutnya</button>
   </div>
+</div>
 
+<button id="donasiBtn">💖 Donasi/Dukung Kami</button>
+
+<div id="popupDonasi">
+  <div class="popup-content">
+    <h3>Terima Kasih Banyak! 🙏</h3>
+    <p>Dukungan Anda sangat berarti untuk pengembangan kuis ini. Setiap kontribusi membantu kami membuat soal dan fitur yang lebih baik.</p>
+    <p>Semoga kebaikan Anda dibalas. Jazakumullah Khairan Katsiran!</p>
+    <button id="tutupPopup">Tutup</button>
+  </div>
 </div>
 
 <script src="soal.js" type="module"></script>
