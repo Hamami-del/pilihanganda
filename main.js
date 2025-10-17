@@ -1,40 +1,37 @@
 console.log("✅ main.js berhasil dijalankan");
 
-// Mengimpor dari file terpisah
+// Impor dari file terpisah (Perhatikan import firebaseConfig)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { data } from "./soal.js";
-// Mengimpor konfigurasi dari file firebaseConfig.js (Asumsi: file ini ada)
-import { firebaseConfig } from "./firebaseConfig.js"; 
+import { firebaseConfig } from "./firebaseConfig.js"; // Import Config dari file terpisah
 
 // 🔹 Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// 🔹 Ambil elemen DOM (SUDAH DISINKRONKAN DENGAN index.html BARU)
-const namaContainer = document.getElementById("nama-container"); // <-- FIX 1: Variabel untuk kontainer utama
+// 🔹 Ambil elemen DOM (Semua sudah disinkronkan dengan index.html baru)
+const namaContainer = document.getElementById("nama-container"); // <-- FIX: Ambil kontainer nama
 const namaInput = document.getElementById("namaInput");
-const btnKirim = document.getElementById("btnKirim"); // Tombol Mulai
+const btnKirim = document.getElementById("btnKirim"); // Tombol Mulai Kuis
 const kuisContainer = document.getElementById("kuisContainer");
 const soalText = document.getElementById("soalText");
 const jawabanInput = document.getElementById("jawabanInput");
 const btnJawab = document.getElementById("btnJawab");
 const hasil = document.getElementById("hasil");
-const levelSelect = document.getElementById("levelSelect"); // Pilihan Mapel
+const levelSelect = document.getElementById("levelSelect"); 
 const skorText = document.getElementById("skorText");
 const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
-const tutupPopup = document.getElementById("tutupPopup");
+const tutupPopup = document.getElementById("tutupPopup"); // Tombol Tutup Popup
 
-// 🔹 Variabel global
 let namaPemain = "";
 let indexSoal = 0;
 let levelDipilih = "agama";
 let skor = 0;
 
-// 🔹 Normalisasi teks (penting untuk jawaban isian)
+// 🔹 Normalisasi teks
 function normalisasi(teks) {
-  // Menghilangkan spasi, mengubah huruf kecil, menghapus tanda baca kecuali spasi
   return teks.toLowerCase().trim().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, ""); 
 }
 
@@ -66,14 +63,14 @@ btnKirim.onclick = () => {
     return;
   }
 
-  // Kirim data ke Firebase (nama dan pelajaran)
+  // Kirim data ke Firebase
   push(ref(db, "pemain/"), {
     nama: namaPemain,
     level: levelDipilih,
     waktu: new Date().toLocaleString("id-ID")
   });
 
-  // FIX 2: Sembunyikan form menggunakan variabel yang benar
+  // FIX: Sembunyikan form yang benar
   namaContainer.style.display = "none"; 
   kuisContainer.style.display = "block";
 
@@ -104,7 +101,6 @@ function tampilkanSoal() {
     return;
   }
   
-  // Tampilkan UI kuis
   jawabanInput.style.display = "block";
   btnJawab.style.display = "block";
   
@@ -120,10 +116,7 @@ btnJawab.onclick = () => {
   const jawabanPemain = normalisasi(jawabanInput.value);
   const jawabanBenar = normalisasi(soal[indexSoal].a);
 
-  // Hapus class lama
   hasil.classList.remove("benar", "salah");
-
-  // Matikan tombol Jawab sementara
   btnJawab.disabled = true;
 
   if (jawabanPemain === jawabanBenar) {
@@ -134,15 +127,14 @@ btnJawab.onclick = () => {
   } else {
     hasil.textContent = `❌ Salah! Jawaban yang benar adalah: ${soal[indexSoal].a}`;
     hasil.classList.add("salah");
-    // Karena skor Anda menggunakan animasi, skor tidak berkurang, hanya tidak bertambah.
   }
 
   indexSoal++;
   
   setTimeout(() => {
-    btnJawab.disabled = false; // Aktifkan lagi tombol Jawab
-    tampilkanSoal(); // Lanjut ke soal berikutnya
-  }, 1500); // Jeda 1.5 detik agar pengguna bisa melihat feedback
+    btnJawab.disabled = false;
+    tampilkanSoal();
+  }, 1500); 
 };
 
 // -------------------------------------------------------------------------
@@ -154,7 +146,7 @@ donasiBtn.onclick = () => {
   popupDonasi.style.display = "flex";
 };
 
-// 🔹 Tutup popup (Menggunakan ID #tutupPopup)
+// 🔹 Tutup popup
 tutupPopup.onclick = () => {
   popupDonasi.style.display = "none";
 };
