@@ -3,50 +3,216 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis Islami • By Hamami</title>
+<title>Kuis Pintar | By Hamami</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-  /* ... (Style tetap sama) ... */
-  body { font-family: 'Poppins', sans-serif; padding: 20px; background: #f7f7f7; }
-  #kuis-container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-  input[type="text"], select { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-  button { padding: 10px 20px; margin: 5px 5px 5px 0; cursor: pointer; border-radius: 5px; border: none; background: #4caf50; color: #fff; font-size: 16px; }
-  button:hover { background: #45a049; }
-  #hasil.benar { color: green; font-weight: bold; }
-  #hasil.salah { color: red; font-weight: bold; }
-  #popupDonasi { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index: 1000;}
-  #popupDonasi .popup-content { background:#fff; padding:20px; border-radius:10px; max-width:400px; text-align:center; }
+    /* -------------------------- */
+    /* 1. Reset dan Layout Dasar */
+    /* -------------------------- */
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        padding: 0; 
+        margin: 0; 
+        background: #f0f2f5; /* Background Abu-abu Muda */
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh;
+    }
+    .card-container {
+        width: 100%;
+        max-width: 400px; /* Lebar Kotak Kuis */
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    /* -------------------------- */
+    /* 2. Style Judul & Input */
+    /* -------------------------- */
+    h2 { 
+        color: #333; 
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    #copyright {
+        margin-top: 20px;
+        font-size: 0.85em;
+        color: #777;
+    }
+
+    label {
+        display: block;
+        text-align: left;
+        margin-top: 15px;
+        font-weight: 600;
+        color: #555;
+    }
+    input[type="text"], select { 
+        width: 100%; 
+        padding: 10px; 
+        margin: 8px 0 15px 0; 
+        border: 1px solid #ddd; 
+        border-radius: 6px; 
+        box-sizing: border-box; 
+        font-size: 15px;
+        transition: border-color 0.3s;
+    }
+    input[type="text"]:focus, select:focus {
+        border-color: #4caf50;
+        outline: none;
+    }
+
+    /* -------------------------- */
+    /* 3. Style Tombol */
+    /* -------------------------- */
+    .btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.3s, transform 0.1s;
+    }
+    .btn:active {
+        transform: scale(0.99);
+    }
+
+    /* Tombol Mulai (Warna Hijau) */
+    #btnKirim {
+        background: #4caf50; 
+        color: white;
+    }
+    #btnKirim:hover {
+        background: #45a049;
+    }
+
+    /* Tombol Jawab (Warna Biru) */
+    #btnJawab {
+        background: #007bff;
+        color: white;
+    }
+    #btnJawab:hover {
+        background: #0056b3;
+    }
+
+    /* Tombol Donasi (Fixed) */
+    #donasiBtn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: auto;
+        padding: 12px 20px;
+        background: #ffc107; /* Kuning/Emas */
+        color: #333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 25px;
+    }
+    #donasiBtn:hover {
+        background: #e0a800;
+    }
+
+    /* -------------------------- */
+    /* 4. Style Kuis & Feedback */
+    /* -------------------------- */
+    #soalText {
+        min-height: 50px;
+        text-align: left;
+        font-size: 1.1em;
+    }
+    #skorText {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #007bff;
+        margin-top: 15px;
+    }
+    #hasil {
+        padding: 10px;
+        margin-top: 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-align: center;
+        min-height: 20px;
+    }
+    .benar { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .salah { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    /* Popup Donasi */
+    #popupDonasi { 
+        display:none; 
+        position:fixed; 
+        top:0; 
+        left:0; 
+        width:100%; 
+        height:100%; 
+        background:rgba(0,0,0,0.7); 
+        justify-content:center; 
+        align-items:center; 
+        z-index: 1000;
+    }
+    #popupDonasi .popup-content { 
+        background:#fff; 
+        padding:30px; 
+        border-radius:10px; 
+        max-width:350px; 
+        text-align:center; 
+    }
+    #tutupPopup { 
+        margin-top: 15px; 
+        background: #dc3545; /* Merah */
+        width: auto;
+    }
 </style>
 </head>
 <body>
 
-<div id="nama-container">
-  <h2>Masukkan Nama Kamu</h2>
-  <input type="text" id="namaPemain" placeholder="Nama kamu..." />
+<div class="card-container">
   
-  <label for="levelSelect">Pilih Mata Pelajaran:</label>
-  <select id="levelSelect">
-    <option value="agama">Agama</option>
-    <option value="indonesia">Bahasa Indonesia</option>
-    <option value="matematika">Matematika</option>
-    <option value="inggris">Bahasa Inggris</option>
-  </select>
+  <div id="nama-container">
+    <h2>Mulai Kuis Pintar</h2>
+    
+    <label for="namaInput">Nama Kamu:</label>
+    <input type="text" id="namaInput" placeholder="Masukkan nama..." />
+    
+    <label for="levelSelect">Pilih Mata Pelajaran:</label>
+    <select id="levelSelect">
+      <option value="agama">Agama</option>
+      <option value="indonesia">Bahasa Indonesia</option>
+      <option value="matematika">Matematika</option>
+      <option value="inggris">Bahasa Inggris</option>
+    </select>
+    
+    <button id="btnKirim" class="btn">Mulai Kuis</button>
+    
+    <p id="copyright">Copyright By Hamami</p>
+  </div>
 
-  <button id="mulaiBtn">Mulai Kuis</button> 
+  <div id="kuisContainer" style="display:none;">
+    <h2 id="soalText"></h2>
+    
+    <label for="jawabanInput">Jawabanmu:</label>
+    <input type="text" id="jawabanInput" placeholder="Ketik jawabanmu di sini" />
+    <button id="btnJawab" class="btn">Jawab</button>
+    
+    <p id="hasil"></p> 
+    <p id="skorText">Skor: 0</p> 
+  </div>
 </div>
-
-<div id="kuis-container" style="display:none;">
-  <h2 id="soalText"></h2> <input type="text" id="jawabanInput" placeholder="Ketik jawaban kamu di sini (mis: Al-Qur'an)" />
-  <button id="btnJawab">Jawab</button>
-  
-  <p id="hasil"></p> <p id="skorText">Skor: 0</p> </div>
 
 <button id="donasiBtn">💖 Donasi/Dukung Kami</button>
 
 <div id="popupDonasi">
   <div class="popup-content">
-    <h2>💖 Dukunganmu sangat berarti!</h2>
-    <p>Dukunganmu membantu pengembangan <b>Kuis Islami by Hamami</b>.</p>
-    <button id="tutupPopup">Tutup</button>
+    <h2>Terima Kasih Banyak! 🙏</h2>
+    <p>Dukungan Anda sangat berarti untuk pengembangan kuis ini.</p>
+    <button id="tutupPopup" class="btn">Tutup</button>
   </div>
 </div>
 
