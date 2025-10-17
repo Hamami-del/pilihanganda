@@ -1,158 +1,150 @@
-console.log("✅ main.js berhasil dijalankan");
-
-// Impor dari file terpisah (membutuhkan type="module" di HTML)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { data } from "./soal.js";
-import { firebaseConfig } from "./firebaseConfig.js"; // Mengimpor config Anda
 
-// 🔹 Inisialisasi Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// 🔹 Ambil elemen DOM (SEMUA ID SINKRON)
-const namaContainer = document.getElementById("nama-container"); // <-- FIX: Ambil kontainer nama
-const namaInput = document.getElementById("namaInput");
-const btnKirim = document.getElementById("btnKirim"); 
-const kuisContainer = document.getElementById("kuisContainer"); // <-- FIX: ID kuisContainer
-const soalText = document.getElementById("soalText"); // <-- FIX: ID soalText
-const jawabanInput = document.getElementById("jawabanInput");
-const btnJawab = document.getElementById("btnJawab");
-const hasil = document.getElementById("hasil");
+// 🔹 Ambil elemen DOM (Lama)
+const namaContainer = document.getElementById("nama-container");
+const namaInput = document.getElementById("namaPemain");
+const mulaiBtn = document.getElementById("mulaiBtn");
 const levelSelect = document.getElementById("levelSelect"); 
-const skorText = document.getElementById("skorText"); // <-- FIX: ID skorText
+const kuisContainer = document.getElementById("kuis-container");
+const pertanyaanText = document.getElementById("pertanyaan");
+const pilihanContainer = document.getElementById("pilihan-container");
+const hasilFeedback = document.getElementById("hasil-feedback");
+const skorText = document.getElementById("skor");
+const nextBtn = document.getElementById("nextBtn");
+
+// 🔹 Ambil elemen DOM (Baru untuk Donasi)
 const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
-const tutupPopup = document.getElementById("tutupPopup"); 
+const tutupPopup = document.getElementById("tutupPopup"); // Tombol tutup di dalam popup
 
+// 🔹 Variabel global (tetap sama)
 let namaPemain = "";
 let indexSoal = 0;
-let levelDipilih = "agama";
+let levelDipilih = ""; 
 let skor = 0;
 
-// 🔹 Normalisasi teks
-function normalisasi(teks) {
-  // Mengubah ke huruf kecil, menghilangkan spasi di tepi, dan menghapus karakter non-alfanumerik/non-spasi
-  return teks.toLowerCase().trim().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, ""); 
-}
-
-// 🔹 Animasi skor
-function animasiSkor(nilaiBaru) {
-  let nilaiSekarang = parseInt(skorText.textContent.replace('Skor: ', '') || 0);
-  const step = 1; 
-  const interval = setInterval(() => {
-    nilaiSekarang += (nilaiBaru > nilaiSekarang ? step : 0);
-    skorText.textContent = `Skor: ${nilaiSekarang}`; // Menjaga format teks "Skor: "
-    if (nilaiSekarang >= nilaiBaru) {
-      clearInterval(interval);
-      skorText.textContent = `Skor: ${nilaiBaru}`;
+// 🔹 Fungsi untuk mengacak array (tetap sama)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
-  }, 30);
 }
 
 // -------------------------------------------------------------------------
-// 🔹 LOGIKA KUIS
+// 🔹 LOGIKA KUIS (Tombol Mulai, Tampilkan Soal, Cek Jawaban, Next Soal)
 // -------------------------------------------------------------------------
 
-// 🔹 Saat klik tombol "Mulai Kuis"
-btnKirim.onclick = () => {
+// 🔹 Saat klik tombol "Mulai Kuis" (tetap sama)
+mulaiBtn.onclick = () => {
   namaPemain = namaInput.value.trim();
   levelDipilih = levelSelect.value;
-
+  
   if (namaPemain === "") {
-    alert("Isi nama dulu, ya! 🙏");
+    alert("Mohon isi nama Anda untuk memulai kuis. 🙏");
     return;
   }
 
-  // Kirim data ke Firebase
-  push(ref(db, "pemain/"), {
-    nama: namaPemain,
-    level: levelDipilih,
-    waktu: new Date().toLocaleString("id-ID")
-  });
-
-  // FIX: Menggunakan namaContainer yang benar
-  namaContainer.style.display = "none"; 
+  namaContainer.style.display = "none";
   kuisContainer.style.display = "block";
 
-  // Reset progres
   indexSoal = 0;
   skor = 0;
-  skorText.textContent = "Skor: 0"; // Memastikan format teks
+  skorText.textContent = "Skor: 0";
+  hasilFeedback.textContent = "";
 
   tampilkanSoal();
 };
 
-// 🔹 Fungsi tampilkan soal
+// 🔹 Fungsi tampilkan soal (tetap sama)
 function tampilkanSoal() {
   const soal = data[levelDipilih];
 
   if (!soal || soal.length === 0) {
-    soalText.textContent = `❌ Tidak ada soal untuk mata pelajaran ${levelDipilih.toUpperCase()}.`;
-    jawabanInput.style.display = "none";
-    btnJawab.style.display = "none";
+    pertanyaanText.textContent = "❌ Tidak ada soal untuk mata pelajaran ini.";
+    pilihanContainer.innerHTML = "";
+    nextBtn.style.display = "none";
     return;
   }
 
   if (indexSoal >= soal.length) {
-    soalText.textContent = `🎉 Kuis selesai! Skor akhir Anda: ${skor}. Terima kasih, ${namaPemain}!`;
-    jawabanInput.style.display = "none";
-    btnJawab.style.display = "none";
-    hasil.textContent = "";
+    pertanyaanText.textContent = `🎉 Kuis selesai! Skor akhir Anda: ${skor}. Terima kasih, ${namaPemain}!`;
+    pilihanContainer.innerHTML = "";
+    nextBtn.style.display = "none";
+    hasilFeedback.textContent = "";
     return;
   }
-  
-  jawabanInput.style.display = "block";
-  btnJawab.style.display = "block";
-  
-  soalText.textContent = `Soal ${indexSoal + 1}: ${soal[indexSoal].q}`;
-  hasil.textContent = "";
-  jawabanInput.value = "";
-  jawabanInput.focus();
+
+  const currentSoal = soal[indexSoal];
+
+  pertanyaanText.textContent = `Soal ${indexSoal + 1}: ${currentSoal.q}`;
+  pilihanContainer.innerHTML = ""; 
+  hasilFeedback.textContent = ""; 
+  nextBtn.style.display = "none";
+
+  shuffleArray(currentSoal.options);
+
+  if (currentSoal.options) {
+      currentSoal.options.forEach(pilihan => {
+          const button = document.createElement("button");
+          button.textContent = pilihan;
+          button.setAttribute("data-jawaban", pilihan);
+          button.onclick = () => cekJawaban(button, currentSoal.a);
+          pilihanContainer.appendChild(button);
+      });
+  }
 }
 
-// 🔹 Saat jawab soal
-btnJawab.onclick = () => {
-  const soal = data[levelDipilih];
-  const jawabanPemain = normalisasi(jawabanInput.value);
-  const jawabanBenar = normalisasi(soal[indexSoal].a);
+// 🔹 Fungsi cek jawaban (tetap sama)
+function cekJawaban(tombolYangDiklik, jawabanBenar) {
+  Array.from(pilihanContainer.children).forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+  });
 
-  hasil.classList.remove("benar", "salah");
-  btnJawab.disabled = true;
+  const jawabanPemain = tombolYangDiklik.getAttribute("data-jawaban");
+  hasilFeedback.classList.remove("correct", "wrong");
 
   if (jawabanPemain === jawabanBenar) {
-    hasil.textContent = "✅ Benar!";
-    hasil.classList.add("benar");
-    skor += 10;
-    animasiSkor(skor);
+      hasilFeedback.textContent = "✅ Jawaban Anda Benar!";
+      hasilFeedback.classList.add("correct");
+      tombolYangDiklik.style.backgroundColor = "#28a745"; 
+      skor += 10;
+      skorText.textContent = `Skor: ${skor}`;
   } else {
-    hasil.textContent = `❌ Salah! Jawaban yang benar adalah: ${soal[indexSoal].a}`;
-    hasil.classList.add("salah");
+      hasilFeedback.textContent = `❌ Jawaban Salah! Jawaban yang benar adalah: ${jawabanBenar}`;
+      hasilFeedback.classList.add("wrong");
+      tombolYangDiklik.style.backgroundColor = "#dc3545"; 
+      
+      const tombolBenar = Array.from(pilihanContainer.children).find(btn => btn.getAttribute("data-jawaban") === jawabanBenar);
+      if(tombolBenar) tombolBenar.style.backgroundColor = "#28a745";
   }
+  nextBtn.style.display = "block";
+}
 
+// 🔹 Saat klik tombol "Soal Berikutnya" (tetap sama)
+nextBtn.onclick = () => {
   indexSoal++;
-  
-  setTimeout(() => {
-    btnJawab.disabled = false;
-    tampilkanSoal();
-  }, 1500); 
+  tampilkanSoal();
 };
 
 // -------------------------------------------------------------------------
-// 🔹 LOGIKA DONASI
+// 🔹 LOGIKA POPUP DONASI (BARU)
 // -------------------------------------------------------------------------
 
-// 🔹 Tombol Donasi
+// 🔹 Saat klik tombol "Donasi"
 donasiBtn.onclick = () => {
   popupDonasi.style.display = "flex";
 };
 
-// 🔹 Tutup popup
+// 🔹 Saat klik tombol "Tutup" di dalam popup
 tutupPopup.onclick = () => {
   popupDonasi.style.display = "none";
 };
 
-// 🔹 Tutup popup kalau klik di luar kotak
-window.onclick = (e) => {
-  if (e.target === popupDonasi) popupDonasi.style.display = "none";
+// 🔹 Saat klik di luar kotak popup, popup tertutup (opsional)
+window.onclick = (event) => {
+  if (event.target === popupDonasi) {
+    popupDonasi.style.display = "none";
+  }
 };
