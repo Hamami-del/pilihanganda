@@ -5,16 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuis Pintar | By Hamami</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
     /* -------------------------- */
-    /* 1. Reset dan Layout Dasar */
+    /* 1. Layout Dasar dan Card */
     /* -------------------------- */
     body { 
         font-family: 'Poppins', sans-serif; 
         padding: 0; 
         margin: 0; 
-        background: #f0f2f5; /* Background Abu-abu Muda */
+        background: #f0f2f5; 
         display: flex; 
         justify-content: center; 
         align-items: center; 
@@ -22,7 +21,7 @@
     }
     .card-container {
         width: 100%;
-        max-width: 400px; /* Lebar Kotak Kuis */
+        max-width: 400px;
         background: #ffffff;
         padding: 30px;
         border-radius: 12px;
@@ -33,25 +32,10 @@
     /* -------------------------- */
     /* 2. Style Judul & Input */
     /* -------------------------- */
-    h2 { 
-        color: #333; 
-        font-weight: 700;
-        margin-top: 0;
-        margin-bottom: 20px;
-    }
-    #copyright {
-        margin-top: 20px;
-        font-size: 0.85em;
-        color: #777;
-    }
-
-    label {
-        display: block;
-        text-align: left;
-        margin-top: 15px;
-        font-weight: 600;
-        color: #555;
-    }
+    h2 { color: #333; font-weight: 700; margin-top: 0; margin-bottom: 20px; }
+    #copyright { margin-top: 20px; font-size: 0.85em; color: #777; }
+    label { display: block; text-align: left; margin-top: 15px; font-weight: 600; color: #555; }
+    
     input[type="text"], select { 
         width: 100%; 
         padding: 10px; 
@@ -60,13 +44,8 @@
         border-radius: 6px; 
         box-sizing: border-box; 
         font-size: 15px;
-        transition: border-color 0.3s;
     }
-    input[type="text"]:focus, select:focus {
-        border-color: #4caf50;
-        outline: none;
-    }
-
+    
     /* -------------------------- */
     /* 3. Style Tombol */
     /* -------------------------- */
@@ -79,68 +58,32 @@
         cursor: pointer;
         font-weight: 600;
         font-size: 16px;
-        transition: background-color 0.3s, transform 0.1s;
+        transition: background-color 0.3s;
     }
-    .btn:active {
-        transform: scale(0.99);
-    }
+    #btnKirim { background: #4caf50; color: white; } /* Tombol Mulai */
+    #btnKirim:hover { background: #45a049; }
+    #btnJawab { background: #007bff; color: white; margin-top: 5px;} /* Tombol Jawab */
+    #btnJawab:hover { background: #0056b3; }
 
-    /* Tombol Mulai (Warna Hijau) */
-    #btnKirim {
-        background: #4caf50; 
-        color: white;
-    }
-    #btnKirim:hover {
-        background: #45a049;
-    }
-
-    /* Tombol Jawab (Warna Biru) */
-    #btnJawab {
-        background: #007bff;
-        color: white;
-    }
-    #btnJawab:hover {
-        background: #0056b3;
-    }
-
-    /* Tombol Donasi (Fixed) */
+    /* Tombol Donasi Fixed */
     #donasiBtn {
         position: fixed;
         bottom: 20px;
         right: 20px;
         width: auto;
         padding: 12px 20px;
-        background: #ffc107; /* Kuning/Emas */
+        background: #ffc107; 
         color: #333;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         border-radius: 25px;
     }
-    #donasiBtn:hover {
-        background: #e0a800;
-    }
-
+    
     /* -------------------------- */
     /* 4. Style Kuis & Feedback */
     /* -------------------------- */
-    #soalText {
-        min-height: 50px;
-        text-align: left;
-        font-size: 1.1em;
-    }
-    #skorText {
-        font-size: 1.2em;
-        font-weight: 700;
-        color: #007bff;
-        margin-top: 15px;
-    }
-    #hasil {
-        padding: 10px;
-        margin-top: 15px;
-        border-radius: 6px;
-        font-weight: 600;
-        text-align: center;
-        min-height: 20px;
-    }
+    #soalText { min-height: 50px; text-align: left; font-size: 1.1em; }
+    #skorText { font-size: 1.2em; font-weight: 700; color: #007bff; margin-top: 15px; }
+    #hasil { padding: 10px; margin-top: 15px; border-radius: 6px; font-weight: 600; text-align: center; min-height: 20px; }
     .benar { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .salah { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
@@ -157,16 +100,9 @@
         align-items:center; 
         z-index: 1000;
     }
-    #popupDonasi .popup-content { 
-        background:#fff; 
-        padding:30px; 
-        border-radius:10px; 
-        max-width:350px; 
-        text-align:center; 
-    }
     #tutupPopup { 
         margin-top: 15px; 
-        background: #dc3545; /* Merah */
+        background: #dc3545; 
         width: auto;
     }
 </style>
@@ -189,7 +125,7 @@
       <option value="inggris">Bahasa Inggris</option>
     </select>
     
-    <button id="btnKirim" class="btn">Mulai Kuis</button>
+    <button id="btnKirim" class="btn">Mulai Kuis</button> 
     
     <p id="copyright">Copyright By Hamami</p>
   </div>
