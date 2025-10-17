@@ -12,12 +12,16 @@ const hasilFeedback = document.getElementById("hasil-feedback");
 const skorText = document.getElementById("skor");
 const nextBtn = document.getElementById("nextBtn");
 
-// 🔹 Ambil elemen DOM (Baru untuk Donasi)
+// 🔹 Ambil elemen DOM (Donasi)
 const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
-const tutupPopup = document.getElementById("tutupPopup"); // Tombol tutup di dalam popup
+const tutupPopup = document.getElementById("tutupPopup");
 
-// 🔹 Variabel global (tetap sama)
+// 🔹 Ambil elemen DOM (Audio - BARU)
+const audioCorrect = document.getElementById("audioCorrect");
+const audioWrong = document.getElementById("audioWrong");
+
+// 🔹 Variabel global
 let namaPemain = "";
 let indexSoal = 0;
 let levelDipilih = ""; 
@@ -27,12 +31,12 @@ let skor = 0;
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i], array[j]] = [array[i], array[j]];
     }
 }
 
 // -------------------------------------------------------------------------
-// 🔹 LOGIKA KUIS (Tombol Mulai, Tampilkan Soal, Cek Jawaban, Next Soal)
+// 🔹 LOGIKA KUIS
 // -------------------------------------------------------------------------
 
 // 🔹 Saat klik tombol "Mulai Kuis" (tetap sama)
@@ -95,8 +99,10 @@ function tampilkanSoal() {
   }
 }
 
-// 🔹 Fungsi cek jawaban (tetap sama)
+// 🔹 Fungsi cek jawaban (MODIFIKASI AUDIO)
 function cekJawaban(tombolYangDiklik, jawabanBenar) {
+  
+  // Matikan semua tombol pilihan setelah menjawab
   Array.from(pilihanContainer.children).forEach(btn => {
       btn.disabled = true;
       btn.style.cursor = 'default';
@@ -106,12 +112,20 @@ function cekJawaban(tombolYangDiklik, jawabanBenar) {
   hasilFeedback.classList.remove("correct", "wrong");
 
   if (jawabanPemain === jawabanBenar) {
+      // 🔊 Mainkan suara benar
+      audioCorrect.currentTime = 0; // Reset audio jika sedang dimainkan
+      audioCorrect.play();
+      
       hasilFeedback.textContent = "✅ Jawaban Anda Benar!";
       hasilFeedback.classList.add("correct");
       tombolYangDiklik.style.backgroundColor = "#28a745"; 
       skor += 10;
       skorText.textContent = `Skor: ${skor}`;
   } else {
+      // 🔊 Mainkan suara salah
+      audioWrong.currentTime = 0; // Reset audio jika sedang dimainkan
+      audioWrong.play();
+      
       hasilFeedback.textContent = `❌ Jawaban Salah! Jawaban yang benar adalah: ${jawabanBenar}`;
       hasilFeedback.classList.add("wrong");
       tombolYangDiklik.style.backgroundColor = "#dc3545"; 
@@ -129,7 +143,7 @@ nextBtn.onclick = () => {
 };
 
 // -------------------------------------------------------------------------
-// 🔹 LOGIKA POPUP DONASI (BARU)
+// 🔹 LOGIKA POPUP DONASI (tetap sama)
 // -------------------------------------------------------------------------
 
 // 🔹 Saat klik tombol "Donasi"
