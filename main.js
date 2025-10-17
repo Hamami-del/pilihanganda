@@ -1,4 +1,4 @@
-console.log("✅ main.js Pilihan Ganda dengan Animasi Feedback dijalankan");
+console.log("✅ main.js Pilihan Ganda dengan Popup Bounce & Suara dijalankan");
 
 // 🔹 Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -23,23 +23,27 @@ const donasiBtn = document.getElementById("donasiBtn");
 const popupDonasi = document.getElementById("popupDonasi");
 const tutupPopup = document.querySelector("#popupDonasi button");
 
-// 🔹 Tambah elemen popup feedback dengan animasi
+// 🔹 Tambah elemen popup feedback besar + bounce
 const popupFeedback = document.createElement("div");
 popupFeedback.style.position = "fixed";
-popupFeedback.style.top = "50%";
 popupFeedback.style.left = "50%";
-popupFeedback.style.transform = "translate(-50%, -50%) scale(0)";
+popupFeedback.style.top = "50%";
+popupFeedback.style.transform = "translate(-50%, -50%) scale(0.5)";
 popupFeedback.style.background = "#fff";
-popupFeedback.style.padding = "20px 30px";
-popupFeedback.style.borderRadius = "10px";
-popupFeedback.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-popupFeedback.style.fontSize = "20px";
+popupFeedback.style.padding = "30px 50px";
+popupFeedback.style.borderRadius = "15px";
+popupFeedback.style.boxShadow = "0 8px 25px rgba(0,0,0,0.4)";
+popupFeedback.style.fontSize = "28px";
 popupFeedback.style.fontWeight = "bold";
 popupFeedback.style.textAlign = "center";
 popupFeedback.style.zIndex = "1001";
 popupFeedback.style.opacity = "0";
-popupFeedback.style.transition = "all 0.3s ease";
+popupFeedback.style.transition = "all 0.4s ease";
 document.body.appendChild(popupFeedback);
+
+// 🔹 Audio feedback
+const audioCorrect = new Audio("correct.mp3");
+const audioWrong = new Audio("wrong.mp3");
 
 // 🔹 Variabel game
 let namaPemain = "";
@@ -113,22 +117,33 @@ function tampilkanSoal() {
             let benar = normalisasi(option) === normalisasi(soal.a);
             if (benar) { skor += 10; animasiSkor(skor); }
 
-            // Tampilkan popup feedback dengan animasi
+            // Mainkan audio
+            if (benar) audioCorrect.play();
+            else audioWrong.play();
+
+            // Tampilkan popup feedback dengan efek bounce
             popupFeedback.textContent = benar ? "✅ Benar!" : `❌ Salah! Jawaban: ${soal.a}`;
             popupFeedback.style.background = benar ? "#d4edda" : "#f8d7da";
             popupFeedback.style.color = benar ? "#155724" : "#721c24";
             popupFeedback.style.opacity = "1";
-            popupFeedback.style.transform = "translate(-50%, -50%) scale(1)";
 
+            // Efek bounce: scale cepat naik turun
+            popupFeedback.style.transform = "translate(-50%, -50%) scale(1.2)";
+            setTimeout(() => {
+                popupFeedback.style.transform = "translate(-50%, -50%) scale(1)";
+            }, 200);
+
+            // Hilangkan popup setelah 1,5 detik
             setTimeout(() => {
                 popupFeedback.style.opacity = "0";
-                popupFeedback.style.transform = "translate(-50%, -50%) scale(0.8)";
-            }, 1200);
+                popupFeedback.style.transform = "translate(-50%, -50%) scale(0.5)";
+            }, 1500);
 
+            // Soal berikutnya
             setTimeout(() => {
                 indexSoal++;
                 tampilkanSoal();
-            }, 1500);
+            }, 1600);
         };
         pilihanContainer.appendChild(btn);
     });
