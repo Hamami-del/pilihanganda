@@ -175,3 +175,9 @@ for (let i=0; i<30; i++) {
   document.getElementById("particles").appendChild(particle);
 }
 
+// Tambahkan bounce ke tombol donasi setelah halaman load
+window.addEventListener("load", () => {
+    const btn = document.getElementById("donasiBtn");
+    btn.classList.add("bounce");
+});
+
