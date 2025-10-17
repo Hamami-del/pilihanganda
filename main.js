@@ -93,6 +93,9 @@ function tampilkanSoal() {
 // --------------------------------------
 // Fungsi cek jawaban
 function checkJawaban(jawaban, jawabanBenar) {
+    // Disable semua tombol pilihan agar tidak bisa diklik lagi
+    Array.from(pilihanContainer.children).forEach(btn => btn.disabled = true);
+
     if (jawaban === jawabanBenar) {
         hasilFeedback.textContent = "✅ Benar!";
         hasilFeedback.className = "correct";
@@ -103,11 +106,18 @@ function checkJawaban(jawaban, jawabanBenar) {
         hasilFeedback.className = "wrong";
         audioWrong.play();
     }
+
     skorText.textContent = `Skor: ${skor}`;
 
-    // Delay tampil soal berikutnya
-    indexSoal++;
-    setTimeout(() => tampilkanSoal(), 1500);
+    // Hilangkan feedback otomatis setelah 1.5 detik
+    setTimeout(() => {
+        hasilFeedback.textContent = "";
+        hasilFeedback.className = "";
+        indexSoal++;
+        tampilkanSoal();
+    }, 1500);
+}
+
 }
 
 // --------------------------------------
@@ -115,4 +125,5 @@ function checkJawaban(jawaban, jawabanBenar) {
 donasiBtn.onclick = () => popupDonasi.style.display = "flex";
 tutupPopup.onclick = () => popupDonasi.style.display = "none";
 window.onclick = e => { if(e.target === popupDonasi) popupDonasi.style.display = "none"; };
+
 
