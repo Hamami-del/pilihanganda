@@ -82,6 +82,21 @@ function cekJawaban(jawaban){
     indexSoal++;
     setTimeout(tampilkanSoal,1500);
 }
+// ==== FITUR BAGIKAN KE WHATSAPP ====
+document.getElementById("shareBtn").addEventListener("click", function() {
+  // Ambil skor akhir dari elemen atau variabel
+  const skor = document.getElementById("finalScore").innerText.replace("Skor Kamu: ", "");
+
+  // Pesan yang akan dikirim ke WhatsApp
+  const pesan = `Aku baru saja memainkan *Kuis Hamami!* 🧠\nSkorku: ${skor} 🎯\n\nCoba kamu bisa lebih tinggi gak?\nMainkan di sini 👉 ${window.location.href}`;
+
+  // Buat link WhatsApp
+  const url = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
+
+  // Buka WhatsApp
+  window.open(url, "_blank");
+});
+
 
 // Popup donasi
 donasiBtn.onclick=()=>{ popupDonasi.style.display="flex"; }
@@ -109,3 +124,4 @@ for(let i=0;i<30;i++){
     p.style.animationDelay=Math.random()*5+"s";
     particlesDiv.appendChild(p);
 }
+
