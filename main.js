@@ -83,18 +83,23 @@ function cekJawaban(jawaban){
     setTimeout(tampilkanSoal,1500);
 }
 // ==== FITUR BAGIKAN KE WHATSAPP ====
-document.getElementById("shareBtn").addEventListener("click", function() {
-  // Ambil skor akhir dari elemen atau variabel
-  const skor = document.getElementById("finalScore").innerText.replace("Skor Kamu: ", "");
+document.addEventListener("DOMContentLoaded", () => {
+  const shareBtn = document.getElementById("shareBtn");
+  const skorElem = document.getElementById("skor");
 
-  // Pesan yang akan dikirim ke WhatsApp
-  const pesan = `Aku baru saja memainkan *Kuis Hamami!* 🧠\nSkorku: ${skor} 🎯\n\nCoba kamu bisa lebih tinggi gak?\nMainkan di sini 👉 ${window.location.href}`;
+  if (shareBtn && skorElem) {
+    shareBtn.addEventListener("click", () => {
+      // Ambil angka skor dari elemen #skor
+      const skorText = skorElem.innerText.replace("Skor: ", "").trim();
 
-  // Buat link WhatsApp
-  const url = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
+      // Pesan WhatsApp
+      const pesan = `Aku baru saja memainkan *Kuis Hamami!* 🧠\nSkorku: ${skorText} 🎯\n\nCoba kamu bisa lebih tinggi gak?\nMainkan di sini 👉 ${window.location.href}`;
 
-  // Buka WhatsApp
-  window.open(url, "_blank");
+      // Buat URL dan buka WhatsApp (lebih aman dari popup blocker)
+      const url = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
+      window.location.href = url;
+    });
+  }
 });
 
 
@@ -124,4 +129,5 @@ for(let i=0;i<30;i++){
     p.style.animationDelay=Math.random()*5+"s";
     particlesDiv.appendChild(p);
 }
+
 
