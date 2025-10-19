@@ -89,15 +89,38 @@ input[type="text"], select {
   40%{ transform:translateX(-50%) translateY(-10px);}
   60%{ transform:translateX(-50%) translateY(-5px);}
 }
-#donasiBtn.bounce { animation:bounceBtn 2s infinite; }
-
-@keyframes pointing {
-  0%{ transform:translateX(-50%) rotate(0deg);}
-  25%{ transform:translateX(-50%) rotate(-10deg);}
-  50%{ transform:translateX(-50%) rotate(10deg);}
-  75%{ transform:translateX(-50%) rotate(-10deg);}
-  100%{ transform:translateX(-50%) rotate(0deg);}
+/* Tombol Donasi melayang aman di bawah layar */
+#donasiBtn {
+  position: fixed;
+  bottom: 24px; /* jarak dari bawah layar */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background-color: #ffd700;
+  color: #111;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  animation: float 2.5s ease-in-out infinite;
 }
+
+/* Efek animasi mengambang lembut */
+@keyframes float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+
+/* Responsif agar tidak menutupi di HP */
+@media (max-height: 500px) {
+  #donasiBtn {
+    bottom: 8px;
+    padding: 10px 18px;
+  }
+}
+
 #donasiBtn.pointing { animation: pointing 1.5s infinite; }
 /* ===== Si Udin styling & reaksi ===== */
 #udin { display:flex; justify-content:center; margin: 6px 0 12px 0; }
@@ -294,5 +317,6 @@ input[type="text"], select {
 
 </body>
 </html>
+
 
 
