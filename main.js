@@ -1,3 +1,6 @@
+// ===============================
+// FIREBASE SETUP
+// ===============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 import { data } from "./soal.js";
@@ -6,6 +9,9 @@ import { firebaseConfig } from "./firebaseConfig.js";
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ===============================
+// ELEMENT HTML
+// ===============================
 const namaInput = document.getElementById("namaPemain");
 const mulaiBtn = document.getElementById("mulaiBtn");
 const levelSelect = document.getElementById("levelSelect");
@@ -20,114 +26,131 @@ const tutupPopup = document.getElementById("tutupPopup");
 const audioCorrect = document.getElementById("audioCorrect");
 const audioWrong = document.getElementById("audioWrong");
 
-let namaPemain="", levelDipilih="agama", indexSoal=0, skor=0;
+let namaPemain = "";
+let levelDipilih = "agama";
+let indexSoal = 0;
+let skor = 0;
 
-// Animasi tombol donasi
-window.addEventListener("load", ()=>{
-    donasiBtn.classList.add("bounce","pointing");
-    donasiBtn.style.opacity=1;
-    document.getElementById("copyright").style.opacity=1;
+// ===============================
+// ANIMASI AWAL
+// ===============================
+window.addEventListener("load", () => {
+  donasiBtn.classList.add("bounce", "pointing");
+  donasiBtn.style.opacity = 1;
+  document.getElementById("copyright").style.opacity = 1;
 });
 
-// Mulai kuis
-mulaiBtn.onclick = ()=>{
-    namaPemain = namaInput.value.trim();
-    levelDipilih = levelSelect.value;
-    if(!namaPemain){ alert("Isi nama dulu!"); return; }
-
-    push(ref(db,"pemain/"),{
-        nama:namaPemain, level:levelDipilih, waktu:new Date().toLocaleString("id-ID")
-    }).catch(err=>{console.error("Gagal kirim:",err); alert("Error kirim data");});
-
-    document.getElementById("nama-container").style.display="none";
-    kuisContainer.style.display="block";
-    indexSoal=0; skor=0; skorText.textContent=`Skor: ${skor}`;
-    tampilkanSoal();
-};
-
-// Tampilkan soal
-function tampilkanSoal(){
-    const soalList = data[levelDipilih];
-    if(!soalList || indexSoal>=soalList.length){
-        soalText.textContent=`🎉 Kuis selesai! Skor: ${skor}, ${namaPemain}`;
-        pilihanContainer.innerHTML="";
-        return;
-    }
-    soalText.textContent=`Soal ${indexSoal+1}: ${soalList[indexSoal].q}`;
-    pilihanContainer.innerHTML="";
-    hasilFeedback.textContent="";
-
-    soalList[indexSoal].options.forEach(opt=>{
-        const btn = document.createElement("button");
-        btn.textContent=opt;
-        btn.onclick = ()=>cekJawaban(opt);
-        pilihanContainer.appendChild(btn);
-    });
-}
-
-// Cek jawaban
-function cekJawaban(jawaban){
-    const soalBenar = data[levelDipilih][indexSoal].a;
-    if(jawaban.toLowerCase()===soalBenar.toLowerCase()){
-        hasilFeedback.textContent="✅ Benar!";
-        hasilFeedback.className="correct";
-        skor+=10;
-        skorText.textContent=`Skor: ${skor}`;
-        audioCorrect.play();
-    } else{
-        hasilFeedback.textContent=`❌ Salah! Jawaban benar: ${soalBenar}`;
-        hasilFeedback.className="wrong";
-        audioWrong.play();
-    }
-    indexSoal++;
-    setTimeout(tampilkanSoal,1500);
-}
-// ==== FITUR BAGIKAN KE WHATSAPP ====
-document.addEventListener("DOMContentLoaded", () => {
-  const shareBtn = document.getElementById("shareBtn");
-  const skorElem = document.getElementById("skor");
-
-  if (shareBtn && skorElem) {
-    shareBtn.addEventListener("click", () => {
-      // Ambil angka skor dari elemen #skor
-      const skorText = skorElem.innerText.replace("Skor: ", "").trim();
-
-      // Pesan WhatsApp
-      const pesan = `Aku baru saja memainkan *Kuis Hamami!* 🧠\nSkorku: ${skorText} 🎯\n\nCoba kamu bisa lebih tinggi gak?\nMainkan di sini 👉 ${window.location.href}`;
-
-      // Buat URL dan buka WhatsApp (lebih aman dari popup blocker)
-      const url = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
-      window.location.href = url;
-    });
+// ===============================
+// MULAI KUIS
+// ===============================
+mulaiBtn.addEventListener("click", () => {
+  const nama = namaInput.value.trim();
+  if (nama === "") {
+    alert("Masukkan nama kamu dulu, ya!");
+    return;
   }
+
+  namaPemain = nama;
+  levelDipilih = levelSelect.value;
+  indexSoal = 0;
+  skor = 0;
+
+  // Simpan data awal pemain ke Firebase
+  const pemainRef = ref(db, "pemain");
+  push(pemainRef, {
+    nama: namaPemain,
+    level: levelDipilih,
+    waktu: new Date().toLocaleString("id-ID"),
+    skor: 0 // nilai awal 0, nanti diupdate setelah selesai
+  });
+
+  // Tampilkan kuis
+  document.getElementById("nama-container").style.display = "none";
+  kuisContainer.style.display = "block";
+
+  // Tampilkan nama pemain
+  const namaTampil = document.getElementById("namaPemainTampil");
+  if (namaTampil) namaTampil.textContent = `👤 Pemain: ${namaPemain}`;
+
+  mulaiKuis();
 });
 
+// ===============================
+// FUNGSI MENAMPILKAN SOAL
+// ===============================
+function mulaiKuis() {
+  const soalSekarang = data[levelDipilih][indexSoal];
+  soalText.textContent = soalSekarang.q;
 
-// Popup donasi
-donasiBtn.onclick=()=>{ popupDonasi.style.display="flex"; }
-tutupPopup.onclick=()=>{ popupDonasi.style.display="none"; }
-window.onclick=(e)=>{ if(e.target===popupDonasi) popupDonasi.style.display="none"; }
+  pilihanContainer.innerHTML = "";
+  soalSekarang.options.forEach((opsi) => {
+    const tombol = document.createElement("button");
+    tombol.textContent = opsi;
+    tombol.addEventListener("click", () => periksaJawaban(opsi, soalSekarang.a));
+    pilihanContainer.appendChild(tombol);
+  });
 
-// ===== Star & Particle =====
-const starsDiv = document.getElementById("stars");
-for(let i=0;i<50;i++){
-    const star=document.createElement("div");
-    star.className="star"; star.style.top=Math.random()*100+"%";
-    star.style.left=Math.random()*100+"%";
-    star.style.width=star.style.height=Math.random()*3+2+"px";
-    star.style.animationDuration=2+Math.random()*3+"s";
-    starsDiv.appendChild(star);
+  skorText.textContent = `Skor: ${skor}`;
 }
 
-const particlesDiv=document.getElementById("particles");
-for(let i=0;i<30;i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"%";
-    p.style.width=p.style.height=Math.random()*4+2+"px";
-    p.style.animationDuration=5+Math.random()*5+"s";
-    p.style.animationDelay=Math.random()*5+"s";
-    particlesDiv.appendChild(p);
+// ===============================
+// PERIKSA JAWABAN
+// ===============================
+function periksaJawaban(jawaban, kunci) {
+  const benar = jawaban === kunci;
+
+  if (benar) {
+    skor += 10;
+    hasilFeedback.textContent = "✅ Jawaban Benar!";
+    hasilFeedback.className = "correct";
+    audioCorrect.play();
+    document.dispatchEvent(new CustomEvent("answerResult", { detail: { correct: true } }));
+  } else {
+    hasilFeedback.textContent = `❌ Salah! Jawaban benar: ${kunci}`;
+    hasilFeedback.className = "wrong";
+    audioWrong.play();
+    document.dispatchEvent(new CustomEvent("answerResult", { detail: { correct: false } }));
+  }
+
+  skorText.textContent = `Skor: ${skor}`;
+
+  // Tunggu 1 detik lalu lanjut soal berikutnya
+  setTimeout(() => {
+    indexSoal++;
+    if (indexSoal < data[levelDipilih].length) {
+      hasilFeedback.textContent = "";
+      mulaiKuis();
+    } else {
+      selesaiKuis();
+    }
+  }, 1000);
 }
 
+// ===============================
+// SELESAI KUIS
+// ===============================
+function selesaiKuis() {
+  soalText.textContent = `🎉 Kuis selesai!`;
+  pilihanContainer.innerHTML = "";
+  hasilFeedback.textContent = `Selamat ${namaPemain}! Skor akhir kamu: ${skor}`;
+  hasilFeedback.className = "correct";
 
+  // Simpan skor akhir ke Firebase
+  const hasilRef = ref(db, "hasil");
+  push(hasilRef, {
+    nama: namaPemain,
+    level: levelDipilih,
+    skor: skor,
+    waktu: new Date().toLocaleString("id-ID")
+  });
+}
+
+// ===============================
+// POPUP DONASI
+// ===============================
+donasiBtn.addEventListener("click", () => {
+  popupDonasi.style.display = "flex";
+});
+tutupPopup.addEventListener("click", () => {
+  popupDonasi.style.display = "none";
+});
