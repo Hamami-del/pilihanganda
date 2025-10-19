@@ -99,6 +99,36 @@ input[type="text"], select {
   100%{ transform:translateX(-50%) rotate(0deg);}
 }
 #donasiBtn.pointing { animation: pointing 1.5s infinite; }
+/* ===== Si Udin styling & reaksi ===== */
+#udin { display:flex; justify-content:center; margin: 6px 0 12px 0; }
+#udin svg { transition: transform 0.25s ease; }
+
+/* state neutral sudah default */
+
+/* happy state */
+#udin.happy svg { transform: translateY(-6px) scale(1.03); }
+#udin.happy #mouth { d: path("M80 106 Q100 130 120 106"); } /* fallback (browsers may ignore d change via CSS) */
+#udin.happy #blushL, #udin.happy #blushR { opacity:1; transition: opacity 0.25s; }
+
+/* sad state */
+#udin.sad svg { transform: translateY(2px) scale(0.99); }
+#udin.sad #mouth { d: path("M80 118 Q100 98 120 118"); } /* fallback */
+#udin.sad #tears { opacity:1; transition: opacity 0.2s; }
+
+/* extra small animation for tears drop */
+@keyframes tearDrop {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(16px); opacity:0; }
+}
+#udin.sad #tears path { animation: tearDrop 0.9s linear forwards; }
+
+/* accessibility: hide when quiz not started */
+#kuis-container #udin { visibility: visible; }
+
+/* responsive tweak */
+@media (max-width:420px){
+  #udin svg { width:120px; height:120px; }
+}
 
 </style>
 </head>
@@ -122,6 +152,32 @@ input[type="text"], select {
   </div>
 
   <div id="kuis-container" style="display:none;">
+  <!-- Tambahkan ini di dalam #kuis-container, sebelum <h2 id="pertanyaan"> -->
+<div id="udin" class="neutral" aria-hidden="true">
+  <!-- Simple SVG Si Udin dengan peci -->
+  <svg id="udinSVG" viewBox="0 0 200 200" width="160" height="160" xmlns="http://www.w3.org/2000/svg">
+    <!-- kepala -->
+    <circle cx="100" cy="90" r="50" fill="#FFD9B3" />
+    <!-- peci -->
+    <path d="M50 70 C60 45,140 45,150 70 L150 80 C140 55,60 55,50 80 Z" fill="#222"/>
+    <!-- mata kiri -->
+    <g id="eyes">
+      <circle id="eyeL" cx="80" cy="85" r="6" fill="#111"/>
+      <circle id="eyeR" cx="120" cy="85" r="6" fill="#111"/>
+    </g>
+    <!-- mulut (path akan diubah via kelas) -->
+    <path id="mouth" d="M80 110 Q100 120 120 110" stroke="#111" stroke-width="4" fill="transparent" stroke-linecap="round" />
+    <!-- air mata (hidden by default) -->
+    <g id="tears" opacity="0">
+      <path d="M120 96 q2 8 -4 12 q-6 -4 -4 -12 z" fill="#74C0FF"/>
+      <path d="M80 96 q2 8 -4 12 q-6 -4 -4 -12 z" fill="#74C0FF" transform="translate(-4,0)"/>
+    </g>
+    <!-- pipi blushing -->
+    <circle id="blushL" cx="68" cy="100" r="6" fill="#ffb6c1" opacity="0"/>
+    <circle id="blushR" cx="132" cy="100" r="6" fill="#ffb6c1" opacity="0"/>
+  </svg>
+</div>
+
     <h2 id="pertanyaan"></h2>
     <div id="pilihan-container" class="button-group"></div>
     <p id="hasil-feedback"></p>
@@ -148,6 +204,92 @@ input[type="text"], select {
 
 <script src="soal.js" type="module"></script>
 <script src="main.js" type="module"></script>
+<script>
+(function(){
+  // Elemen
+  const udin = document.getElementById('udin');
+  const mouth = document.getElementById('mouth');
+  const tears = document.getElementById('tears');
+  const blushL = document.getElementById('blushL');
+  const blushR = document.getElementById('blushR');
+
+  const audioCorrect = document.getElementById('audioCorrect');
+  const audioWrong = document.getElementById('audioWrong');
+
+  // mouth path shapes (JS akan set atribut d)
+  const mouthNeutral = "M80 110 Q100 120 120 110";
+  const mouthHappy   = "M80 106 Q100 132 120 106";
+  const mouthSad     = "M80 118 Q100 98 120 118";
+
+  // fungsi untuk tampilkan reaksi
+  function showReaction(type, duration = 1800) {
+    // reset kelas dulu
+    udin.classList.remove('happy','sad','neutral');
+    // set mouth path langsung (cross-browser)
+    if(type === 'happy') {
+      udin.classList.add('happy');
+      mouth.setAttribute('d', mouthHappy);
+      blushL.style.opacity = '1';
+      blushR.style.opacity = '1';
+      tears.style.opacity = '0';
+    } else if(type === 'sad') {
+      udin.classList.add('sad');
+      mouth.setAttribute('d', mouthSad);
+      blushL.style.opacity = '0';
+      blushR.style.opacity = '0';
+      // show tears (restart animation)
+      tears.style.opacity = '1';
+      // restart CSS animation by reflow
+      tears.querySelectorAll('path').forEach(p => {
+        p.style.animation = 'none';
+        // force reflow
+        // eslint-disable-next-line no-unused-expressions
+        p.offsetHeight;
+        p.style.animation = '';
+      });
+    } else {
+      udin.classList.add('neutral');
+      mouth.setAttribute('d', mouthNeutral);
+      blushL.style.opacity = '0';
+      blushR.style.opacity = '0';
+      tears.style.opacity = '0';
+    }
+
+    // revert ke neutral setelah duration
+    clearTimeout(udin._reactTimeout);
+    udin._reactTimeout = setTimeout(() => {
+      udin.classList.remove('happy','sad');
+      udin.classList.add('neutral');
+      mouth.setAttribute('d', mouthNeutral);
+      blushL.style.opacity = '0';
+      blushR.style.opacity = '0';
+      tears.style.opacity = '0';
+    }, duration);
+  }
+
+  // Jika main.js memicu audioCorrect/audioWrong, kita dengarkan event 'play'
+  if(audioCorrect) {
+    audioCorrect.addEventListener('play', () => showReaction('happy'));
+  }
+  if(audioWrong) {
+    audioWrong.addEventListener('play', () => showReaction('sad'));
+  }
+
+  // Fallback / integrasi: jika main.js dispatch custom event 'answerResult'
+  // contoh cara dispatch: document.dispatchEvent(new CustomEvent('answerResult', { detail: { correct: true } }));
+  document.addEventListener('answerResult', (e) => {
+    const correct = e?.detail?.correct;
+    if(correct === true) showReaction('happy');
+    else if(correct === false) showReaction('sad');
+  });
+
+  // Optional: jika ingin manual trigger (bisa dipakai waktu testing)
+  window.showUdin = showReaction;
+
+  // set initial neutral
+  showReaction('neutral', 0);
+})();
+</script>
 
 </body>
 </html>
